@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Movie</title>
+</head>
+<body>
+    <h2>Add Movie</h2>
+    <form id="addMovieForm">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title"><br>
+        
+        <label for="director">Director:</label><br>
+        <input type="text" id="director" name="director"><br>
+        
+        <label for="year">Year:</label><br>
+        <input type="number" id="year" name="year"><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('addMovieForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Collect form data
+            const formData = new FormData(this);
+
+            // Convert form data to JSON object
+            const movieData = {
+                title: formData.get('title'),
+                director: formData.get('director'),
+                year: parseInt(formData.get('year')) // Ensure year is parsed as integer
+            };
+
+            // Send form data to server using fetch
+            fetch('http://localhost:8080/api/addmovie', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(movieData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data); // Log the response from server
+                alert('Movie added successfully!');
+                // Optionally, reset the form after successful submission
+                this.reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error adding the movie. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
